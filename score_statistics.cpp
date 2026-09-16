@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+
 
 // 不断读取成绩并保存到 scores。
 // 输入 -1 时结束录入；有效成绩范围是 0～100。
@@ -107,10 +109,50 @@ int main()
     std::cout << "已录入的成绩：";
     print_scores(scores);
 
+    std::vector<int> sorted_scores = scores;
+    std::sort(sorted_scores.begin(), sorted_scores.end());
+
     std::cout << "平均分：" << calculate_average(scores) << '\n';
     std::cout << "最高分：" << find_highest(scores) << '\n';
     std::cout << "最低分：" << find_lowest(scores) << '\n';
     std::cout << "及格人数：" << count_passed(scores) << '\n';
+    std::cout << "排序后的成绩：";
+    print_scores(sorted_scores);
 
+    int target_score{};
+    std::cout << "请输入要查找的成绩：";
+    std::cin >> target_score;
+
+    auto position = std::find(
+        scores.begin(),
+        scores.end(),
+        target_score
+    );
+
+    if(position!= scores.end()){
+        std::cout << "找到该成绩\n";
+    }
+    else{
+        std::cout << "未找到该成绩\n";
+
+    }
+
+    auto first_failed = std::find_if(
+        scores.begin(),
+        scores.end(),
+        [](int score)
+        {
+            return score < 60;
+        });
+
+    if (first_failed != scores.end())
+    {
+        std::cout << "第一个不及格成绩："
+                  << *first_failed << '\n';
+    }
+    else
+    {
+        std::cout << "没有不及格成绩。\n";
+    }
     return 0;
 }
