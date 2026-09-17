@@ -154,5 +154,22 @@ int main()
     {
         std::cout << "没有不及格成绩。\n";
     }
+
+    auto target = std::find_if(
+        scores.begin(),
+        scores.end(),
+        [](int score){
+            return score >= 60 and score <= 80;
+        }
+    );
+
+    if (target != scores.end())
+    {
+        std::cout << "找到该成绩" << *target << "\n";
+    }
+    else
+    {
+        std::cout << "未找到该成绩\n";
+    }
     return 0;
 }
