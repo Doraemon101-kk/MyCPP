@@ -2,44 +2,195 @@
 #include <string>
 #include <vector>
 
-// 先学习类、构造与const查询；到地图课程再加入Grid和enum class。
+class Grid
+{
+public:
+    Grid(const std::vector<std::string>& cells);
+    int rows() const;
+    int cols() const;
+    bool in_bounds(int row, int col) const;
+    bool is_wall(int row, int col) const;
+    bool can_enter(int row, int col) const;
+
+private:
+    std::vector<std::string> cells_;
+};
+
+Grid::Grid(const std::vector<std::string>& cells)
+    : cells_(cells)
+{
+}
+
+int Grid::rows() const
+{
+    return static_cast<int>(cells_.size());
+}
+
+int Grid::cols() const
+{
+    if (cells_.empty())
+    {
+        return 0;
+    }
+
+    return static_cast<int>(cells_[0].size());
+}
+
+enum class Direction
+{
+    North,
+    West,
+    East,
+    South
+};
+
 class Robot
 {
 public:
-    // direction暂用'N'/'E'/'S'/'W'；非法参数采用什么策略请先约定。
-    Robot(int row, int col, char direction);
+    Robot(int row, int col, Direction direction);
     int row() const;
     int col() const;
-    char direction() const;
+    Direction direction() const;
     void turn_left();
     void turn_right();
-    void forward();  // 第一阶段只改变坐标；接地图时再修改为可报告失败的接口。
+    void forward();
 
 private:
     int row_;
     int col_;
-    char direction_;
+    Direction direction_;
 };
 
-// TODO: 在这里或main后定义成员函数。当前仅声明，尚未创建Robot实例。
+char direction_to_char(Direction direction)
+{
+    switch (direction)
+    {
+    case Direction::North:
+        return 'N';
+    case Direction::East:
+        return 'E';
+    case Direction::South:
+        return 'S';
+    case Direction::West:
+        return 'W';
+    }
+
+    return '?';
+}
+
+Robot::Robot(int row, int col, Direction direction)
+    : row_(row), col_(col), direction_(direction)
+{
+}
+
+int Robot::row() const
+{
+    return row_;
+}
+
+int Robot::col() const
+{
+    return col_;
+}
+
+Direction Robot::direction() const
+{
+    return direction_;
+}
+
+void Robot::turn_left()
+{
+    switch (direction_)
+    {
+    case Direction::North:
+        direction_ = Direction::West;
+        break;
+    case Direction::West:
+        direction_ = Direction::South;
+        break;
+    case Direction::South:
+        direction_ = Direction::East;
+        break;
+    case Direction::East:
+        direction_ = Direction::North;
+        break;
+    }
+}
+
+void Robot::turn_right()
+{
+    switch (direction_)
+    {
+    case Direction::North:
+        direction_ = Direction::East;
+        break;
+    case Direction::East:
+        direction_ = Direction::South;
+        break;
+    case Direction::South:
+        direction_ = Direction::West;
+        break;
+    case Direction::West:
+        direction_ = Direction::North;
+        break;
+    }
+}
+
+void Robot::forward()
+{
+    switch (direction_)
+    {
+    case Direction::North:
+        row_ -= 1;
+        break;
+    case Direction::East:
+        col_ += 1;
+        break;
+    case Direction::South:
+        row_ += 1;
+        break;
+    case Direction::West:
+        col_ -= 1;
+        break;
+    }
+}
+
+void print_robot(const std::string& name, const Robot& robot)
+{
+    std::cout
+        << name << ": "
+        << robot.row() << ' '
+        << robot.col() << ' '
+        << direction_to_char(robot.direction()) << '\n';
+}
 
 int main()
 {
-    // 阶段1（9/23）：构造两个机器人，分别操作和查询。
-    // 坐标约定：row向下增大，col向右增大。
-    // TODO: 初始化、转向、前进、输出；比较两个对象互不影响。
+    Robot first(0, 0, Direction::East);
+    Robot second(5, 5, Direction::North);
 
-    // 阶段2（9/26）：使用Grid管理地图、墙和边界。
-    // TODO: 读字符地图；把direction改为enum class；执行F/L/R。
-    // TODO: 前进失败要保持原位置，并报告命令位置。
+    first.forward();
+    first.forward();
+    first.turn_right();
+    first.forward();
 
-    // 阶段3（9/27）：保存起始快照与历史，撤销一步、重放、执行N步。
-    // TODO: 写清撞墙和无效命令是否进入历史，再实现。
+    std::cout << "expected first: 1 2 S\n";
+    print_robot("actual first", first);
 
-    // 阶段4（10/3）：stack撤销、queue待执行命令、暂停和恢复。
-    // TODO: 比较新容器和vector版本的同一段执行结果。
+    std::cout << "expected second: 5 5 N\n";
+    print_robot("actual second", second);
 
-    // 阶段5（10/13）：见pathfinding.hpp与README，用BFS找路线。
-    std::cout << "Robot scaffold: implement the current stage before running a simulation.\n";
+    const Robot observer(3, 4, Direction::West);
+    std::cout << "expected const observer: 3 4 W\n";
+    print_robot("actual const observer", observer);
+
+    Robot variation(2, 2, Direction::North);
+    variation.turn_left();
+    variation.forward();
+    variation.turn_right();
+    variation.forward();
+
+    std::cout << "expected variation: 1 1 N\n";
+    print_robot("actual variation", variation);
     return 0;
 }
