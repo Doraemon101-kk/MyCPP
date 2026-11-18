@@ -1,0 +1,32 @@
+# Build output directories
+/output/
+/build/
+/bin/
+/obj/
+
+# Compiled binaries and intermediate files
+*.exe
+*.out
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.pch
+*.gch
+*.pdb
+*.ilk
+
+# Local editor settings
+/.vscode/
+/.vs/
+
+# Temporary and operating system files
+*.tmp
+*.swp
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini

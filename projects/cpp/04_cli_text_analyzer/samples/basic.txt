@@ -1,0 +1,2 @@
+C++ makes value semantics and object lifetimes visible.
+Python and C++ can solve the same problem with different ownership rules.
